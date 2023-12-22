@@ -10,7 +10,6 @@ const P5Canvas = () => {
     p.setup = () => {
       p.createCanvas(600, 300);
       let ca = Ca(ruleset, 370);
-      console.log(ca);
     };
 
     p.draw = () => {
