@@ -8,8 +8,9 @@ const P5Canvas = () => {
 
   const sketch = (p) => {
     p.setup = () => {
-      p.createCanvas(600, 300);
-      let ca = Ca(ruleset, 370);
+      let canvas = p.createCanvas(600, 300);
+      canvas.parent("sketch-container");      
+      //let ca = Ca(ruleset, 370);
     };
 
     p.draw = () => {
