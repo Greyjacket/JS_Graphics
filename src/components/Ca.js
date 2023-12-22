@@ -107,7 +107,7 @@ const Ca = ({ ruleset, size }) => {
       } else {
           let vector = new Array(size);
           for(let i = 0; i < size; i++) {
-            vector[i] = createMultiDimensionalMatrix(size, dim - 1);
+            vector[i] = generateMultiDimensionalMatrix(size, dim - 1);
           }
           return vector;
       }
