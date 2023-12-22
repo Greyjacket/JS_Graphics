@@ -93,7 +93,7 @@ const Ca = ({ ruleset, size }) => {
 
   export { Ca }; // Named export
 
-  const cellFactory = () => {
+  const cellGenerator = () => {
 
     /**
      * Generates a multi-dimensional matrix of given size and dimensions.
