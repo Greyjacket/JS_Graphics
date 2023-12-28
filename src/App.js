@@ -1,12 +1,12 @@
 import './App.css';
-import P5Canvas from './components/P5Canvas';
+import CellKubernetes from './components/CellKubernetes';
 
 
 function App() {
   return (
     <div>
       <div>
-        <P5Canvas />
+        <CellKubernetes />
       </div>
     </div>
   );

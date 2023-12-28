@@ -101,17 +101,23 @@ export const cellGenerator = () => {
    * @param {number} dim - The number of dimensions.
    * @returns {Array} - The generated matrix.
    */
-  const generateMultiDimensionalMatrix = (size, dim) => {
-    if(dim === 0) {
-        return 0;
+  const generateMultiDimensionalMatrix = (dimensions) => {
+    const createObject = () => ({
+      onState: 0,
+      color: [0, 0, 0],
+    });
+  
+    if(dimensions.length === 0) {
+      return createObject();
     } else {
-        let vector = new Array(size);
-        for(let i = 0; i < size; i++) {
-          vector[i] = generateMultiDimensionalMatrix(size, dim - 1);
-        }
-        return vector;
+      let size = dimensions[0];
+      let vector = new Array(size);
+      for(let i = 0; i < size; i++) {
+        vector[i] = generateMultiDimensionalMatrix(dimensions.slice(1));
+      }
+      return vector;
     }
-  }
+  };
 
   /**
    * Generates the first vector of cells.
@@ -126,15 +132,15 @@ export const cellGenerator = () => {
     });
 
     let firstVector = Array.from({ length: size }, (_) => createObject());
-
     if (random) {
         for (let i = 0; i < size; i++) {
             const randomBit = Math.round(Math.random());
             firstVector[i]['onState'] = randomBit;
         }
     } else {
-        let halfway = Math.floor(size) / 2;
+        let halfway = Math.floor(size / 2);
         firstVector[halfway]['onState'] = 1;
+        firstVector[halfway]['color'] = [0, 0, 0];
     }
     return firstVector;
   };
@@ -165,11 +171,7 @@ export const cellGenerator = () => {
         color: [0, 0, 0],
     });
     let size = vector.length;
-    if(vector.every(num => num === 0)){
-      generateFirstVector(size, random)
-    }
     let nextgen = Array.from({ length: size }, (_) => createObject());
-
     for (let i = 1; i < size - 1; i++) {
       let left = vector[i - 1]['onState'];
       let me = vector[i]['onState'];
@@ -205,22 +207,22 @@ export const cellGrapher = () => {
   };
 }
 
-export const cellKubernetes = (size, dim) => {
-  let ruleset = [0,1,0,1,1,0,1,0]; //rule 90, sierpinski triangle
-  const generation = cellGenerator.createMultiDimensionalMatrix(size, dim);
+// export const cellKubernetes = (size, dim) => {
+//   let ruleset = [0,1,0,1,1,0,1,0]; //rule 90, sierpinski triangle
+//   const generation = cellGenerator.createMultiDimensionalMatrix(size, dim);
   
-  const set_ruleset = (ruleset) => {
-    ruleset = ruleset;
-  };
+//   const set_ruleset = (ruleset) => {
+//     ruleset = ruleset;
+//   };
 
-  const createRule = () => {
-    const randomArray = Array.from({ length: 8 }, () => Math.floor(Math.random() * 2));
-    ruleset = randomArray;
-  };
+//   const createRule = () => {
+//     const randomArray = Array.from({ length: 8 }, () => Math.floor(Math.random() * 2));
+//     ruleset = randomArray;
+//   };
 
-  const getRandomInteger = (min, max) => {
-      return Math.floor(Math.random() * (max - min) + min);
-  };
-};
+//   const getRandomInteger = (min, max) => {
+//       return Math.floor(Math.random() * (max - min) + min);
+//   };
+// };
 
 //export { caFunction };
