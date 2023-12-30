@@ -15,6 +15,7 @@ const CellKubernetes = () => {
   const [emptySet, setEmptySet] = useState([]);
   const [ruleset, setRuleset] = useState([0,1,0,1,1,0,1,0]); //rule 90, sierpinski triangle
   const [isGridInitialized, setIsGridInitialized] = useState(false);
+  const [isNewGeneration, setIsNewGeneration] = useState(false);
 
   const p5Ref = useRef();
 
@@ -25,20 +26,8 @@ const CellKubernetes = () => {
     setIsDrawing(!isDrawing);
   }
 
-  function initialize() {
-    let cols = Math.floor(windowWidth/resolution)
-    let rows = Math.floor(windowHeight/resolution)
-    let newEmptySet = new Array(cols).fill(0);
-    let newGrid = cg.generateMultiDimensionalMatrix([cols, rows]);
-    let newGeneration = cg.generateFirstVector(cols, false);
-    newGrid.shift()
-    newGrid.push(newGeneration)
-    setEmptySet(newEmptySet);
-    setGrid(newGrid);
-    setGeneration(newGeneration);
-  }
-  
   function reinitialize() {
+    setIsGridInitialized(false);
     let cols = Math.floor(windowWidth/resolution)
     let rows = Math.floor(windowHeight/resolution)
     let newGrid = cg.generateMultiDimensionalMatrix([cols, rows]);
@@ -47,6 +36,7 @@ const CellKubernetes = () => {
     newGrid.push(newGeneration)
     setGrid(newGrid);
     setGeneration(newGeneration);
+    setIsGridInitialized(true);
   }
 
   function drawRow(p, row_number){
@@ -68,10 +58,8 @@ const CellKubernetes = () => {
 
   function drawRows(p){
     let rows = Math.floor(windowHeight/resolution)
-    let newRow = cg.generateVector(generation, ruleset, false)
-    //console.log(newRow)
-    grid.shift()
-    grid.push(newRow)
+    setGeneration(cg.generateVector(generation, ruleset));
+    setGrid(prevGrid => [...prevGrid.slice(1), generation]);
     for (let i = 0; i < rows; i++) {
       drawRow(p, i);
     }
@@ -90,15 +78,32 @@ const CellKubernetes = () => {
       //console.log(grid)
       p.background(220);
       p.fill(1);
-      //drawRows(p);
+      drawRows(p);
     };
   }, [windowWidth, windowHeight]);  // Add any other dependencies of sketch here
   
   useEffect(() => {
+    setIsNewGeneration(true);
+  }, [generation]);
+
+  useEffect(() => {
+
+    const initialize = () => {
+      let cols = Math.floor(windowWidth/resolution)
+      let rows = Math.floor(windowHeight/resolution)
+      let newEmptySet = new Array(cols).fill(0);
+      let newGrid = cg.generateMultiDimensionalMatrix([rows, cols]);
+      setGeneration(cg.generateFirstVector(cols, false));
+      newGrid.shift()
+      newGrid.push(generation)
+      setEmptySet(newEmptySet);
+      setGrid(newGrid);
+      setIsGridInitialized(true);
+    }
+
     console.log('Mounting...')
     initialize();
-    setIsGridInitialized(true);
-
+    console.log('Grid Initialized...')
     //const instance = new p5(sketch);
     //setP5Instance(instance);
     //p5Ref.current = new p5(sketch);
@@ -109,19 +114,25 @@ const CellKubernetes = () => {
       //instance && instance.remove();
       //p5Ref.current && p5Ref.current.remove();
     };
-  }, []);  // Now sketch is a dependency of useEffect // Empty dependency array ensures useEffect runs once on mount
+  }, []);  
 
   useEffect(() => {
-    if (isGridInitialized) {
+    let instance;
+    if (isGridInitialized && isNewGeneration) {
       console.log('Creating p5 instance...')
-      console.log(isGridInitialized)
-      console.log(grid)
-
       const instance = new p5(sketch);
       setP5Instance(instance);
       p5Ref.current = instance;
+          // Reset isNewGeneration to false after creating the p5 instance
+      setIsNewGeneration(false);
     }
-  }, [isGridInitialized, sketch]);
+    return () => {
+      if (instance) {
+        instance && instance.remove();
+        p5Ref.current && p5Ref.current.remove();
+      }
+    };
+  }, [isGridInitialized]);
 
   return (
     <div>

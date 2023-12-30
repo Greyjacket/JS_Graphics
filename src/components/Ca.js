@@ -142,6 +142,8 @@ export const cellGenerator = () => {
         firstVector[halfway]['onState'] = 1;
         firstVector[halfway]['color'] = [0, 0, 0];
     }
+    console.log("FirstVector:")
+    console.log(firstVector)
     return firstVector;
   };
 
@@ -165,7 +167,7 @@ export const cellGenerator = () => {
    * @param {Array} ruleset - The ruleset to use.
    * @returns {Array} - The next generation of cells.
    */
-  const generateVector = (vector, ruleset, random=false) => {
+  const generateVector = (vector, ruleset) => {
     const createObject = () => ({
         onState: 0,
         color: [0, 0, 0],
@@ -177,8 +179,10 @@ export const cellGenerator = () => {
       let me = vector[i]['onState'];
       let right = vector[i + 1]['onState'];
       let state = generateState(ruleset, left, me, right);
+      console.log("State:" + state)
       nextgen[i]['onState'] = state;
     }
+    console.log("Nextgen:" + nextgen)
     return nextgen;
   };
 
